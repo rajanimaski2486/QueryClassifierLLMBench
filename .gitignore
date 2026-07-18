@@ -4,6 +4,8 @@ results.jsonl
 probe_results.json
 run.log
 smoke*.jsonl
+LINKEDIN_ARTICLE.md
+search-agentic-workflow.excalidraw
 .env
 node_modules/
 web/.next/
