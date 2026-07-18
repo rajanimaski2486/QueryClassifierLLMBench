@@ -1,0 +1,60 @@
+# Model roster + run config. IDs verified live against GET /v1/models and
+# bench/probe.py on 2026-07-15 — the NVIDIA catalog moves, re-probe before
+# trusting this file. Catalog-listed but 404-for-account (excluded):
+#   mistralai/mistral-7b-instruct-v0.3, google/gemma-3-12b-it
+base_url: https://integrate.api.nvidia.com/v1
+
+rate_limit:
+  rpm: 38          # free tier is 40 RPM; leave headroom
+  concurrency: 8   # slow queued endpoints hold slots for minutes; keep spares
+
+# Frozen composite weights (editable here, nowhere else):
+# composite = route_macro_f1*w + mean(type_macro_f1, category_macro_f1,
+#             entity_exact_f1)*w + schema_valid_rate*w + efficiency*w
+composite_weights:
+  route_macro_f1: 0.45
+  quality_mean: 0.35
+  schema_valid_rate: 0.10
+  efficiency: 0.10
+
+# methods per model were verified by bench/probe.py; system_prefix disables
+# reasoning traces on the nemotron reasoning models (without it they burn
+# tokens or time out in json mode).
+models:
+  # ---- small workhorses (7-20B class)
+  - id: meta/llama-3.1-8b-instruct
+    tier: small
+    methods: [json_mode, tool_call]
+  # temporarily benched mid-run on 2026-07-16: endpoint fell into all-calls
+  # ReadTimeout (worked at 6-30s in the earlier smoke); uncomment and re-run
+  # runner.py to fill in its missing triples when the queue recovers.
+  # - id: nvidia/llama-3.1-nemotron-nano-8b-v1
+  #   tier: small
+  #   methods: [json_mode, tool_call]
+  #   system_prefix: "detailed thinking off"
+  - id: nvidia/nvidia-nemotron-nano-9b-v2
+    tier: small
+    methods: [json_mode, tool_call]
+  - id: nvidia/nemotron-3-nano-30b-a3b
+    tier: small
+    methods: [json_mode, tool_call]
+  - id: openai/gpt-oss-20b
+    tier: small
+    methods: [json_mode, tool_call]
+  # ---- mid quality ceiling
+  # llama-3.3-70b-instruct was verified working but its serverless queue ran
+  # ~2 min/call on 2026-07-16 (swap it back in here if capacity improves);
+  # gpt-oss-120b probed at 1-3s on both methods and stands in as third mid.
+  - id: openai/gpt-oss-120b
+    tier: mid
+    methods: [json_mode, tool_call]
+  # qwen3-next-80b-a3b was probed but its serverless queue ran >90s/call on
+  # 2026-07-15; qwen3.5-122b-a10b (10B active) answered in <3s, so it is the
+  # qwen mid-tier representative.
+  - id: qwen/qwen3.5-122b-a10b
+    tier: mid
+    methods: [json_mode, tool_call]
+  - id: nvidia/llama-3.3-nemotron-super-49b-v1.5
+    tier: mid
+    methods: [json_mode, tool_call]
+    system_prefix: "/no_think"

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+results.jsonl
+probe_results.json
+run.log
+smoke*.jsonl
+.env
+node_modules/
+web/.next/
+web/out/
