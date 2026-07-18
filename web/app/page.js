@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Leaderboard from "../components/Leaderboard";
-import OpsBars from "../components/OpsBars";
-import Confusion from "../components/Confusion";
+import SizeChart from "../components/SizeChart";
 import QueryExplorer from "../components/QueryExplorer";
 
 export default function Page() {
@@ -38,20 +37,26 @@ export default function Page() {
       </main>
     );
 
-  const rows = data.leaderboard;
+  // one row per model: its best-composite structured-output method
+  const best = new Map();
+  for (const s of data.leaderboard) {
+    const cur = best.get(s.model);
+    if (!cur || s.composite > cur.composite) best.set(s.model, s);
+  }
+  const rows = [...best.values()].sort((a, b) => b.composite - a.composite);
   const modelKeys = rows.map((s) => `${s.model}|${s.method}`);
 
   return (
     <main>
       <h1>Routing Bench — stock-image query classification</h1>
       <p className="subtitle">
-        {rows.length} model × method runs over {data.gold.length} gold queries
+        {rows.length} models (each shown with its best structured-output
+        method) over {data.gold.length} gold queries
         · NVIDIA-hosted models, all calls made offline by the runner · generated{" "}
         {data.generated_at}
       </p>
       <Leaderboard rows={rows} />
-      <OpsBars rows={rows} />
-      <Confusion rows={rows} />
+      <SizeChart rows={rows} />
       <QueryExplorer
         gold={data.gold}
         perQuery={data.per_query}

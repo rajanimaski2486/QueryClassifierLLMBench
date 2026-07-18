@@ -113,7 +113,6 @@ export default function QueryExplorer({ gold, perQuery, modelKeys }) {
                 <th>Categories</th>
                 <th>Entities</th>
                 <th>Route</th>
-                <th>Schema</th>
                 <th>Latency</th>
               </tr>
             </thead>
@@ -141,7 +140,6 @@ export default function QueryExplorer({ gold, perQuery, modelKeys }) {
                 </td>
                 <td>{g.gold_route}</td>
                 <td className="muted">—</td>
-                <td className="muted">—</td>
               </tr>
               {modelKeys.map((k) => {
                 const o = outs[k];
@@ -153,7 +151,7 @@ export default function QueryExplorer({ gold, perQuery, modelKeys }) {
                       <td>
                         {shortModel(model)} · {methodLabel[method]}
                       </td>
-                      <td colSpan={6} className="muted">
+                      <td colSpan={5} className="muted">
                         no result
                       </td>
                     </tr>
@@ -183,19 +181,6 @@ export default function QueryExplorer({ gold, perQuery, modelKeys }) {
                     </td>
                     <td className={routeOk ? "" : "cell-miss"}>
                       {p?.route ?? <span className="muted">∅</span>}
-                    </td>
-                    <td>
-                      {o.error ? (
-                        <span title={o.error} style={{ color: "var(--status-critical)" }}>
-                          error
-                        </span>
-                      ) : o.schema_valid ? (
-                        <span style={{ color: "var(--good-text)" }}>ok</span>
-                      ) : (
-                        <span style={{ color: "var(--status-critical)" }}>
-                          invalid
-                        </span>
-                      )}
                     </td>
                     <td className="muted">
                       {o.latency_ms ? `${o.latency_ms} ms` : "—"}

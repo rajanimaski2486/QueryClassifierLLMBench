@@ -57,9 +57,10 @@ export default function Leaderboard({ rows }) {
     <div className="card">
       <h2>Leaderboard</h2>
       <p className="desc">
-        One row per model × structured-output method, over all 77 gold queries.
-        Sorted by composite (0.45·route macro-F1 + 0.35·quality + 0.10·schema +
-        0.10·efficiency). Click a column to re-sort.
+        One row per model, shown with its best structured-output method, over
+        all 77 gold queries. Sorted by composite (0.45·route macro-F1 +
+        0.35·quality + 0.10·schema + 0.10·efficiency). Click a column to
+        re-sort.
       </p>
       <table>
         <thead>
